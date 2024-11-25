@@ -53,6 +53,12 @@ void sbox(bit64 x[5]){
     x[0] ^= t[1]; x[1] ^= t[2]; x[2] ^= t[3]; x[3] ^= t[4]; x[4] ^= t[0];
     x[1] ^= x[0]; x[0] ^= x[4]; x[3] ^= x[2]; x[2] =~ x[2];
 
+}
+
+void add_constant(bit64 x[5]){
+
+
+
 
 }
 void p(bit64 state[5], int numberOfPerm){
