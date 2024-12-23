@@ -1,4 +1,6 @@
-import AES_128 as AES
+import AES_128 as cipher
+
+block_size = 16  #bytes
 
 # XOR operation
 def xor_blocks(block1, block2):
@@ -6,7 +8,6 @@ def xor_blocks(block1, block2):
 
 # CBC mode encryption
 def cbc_encrypt(plaintext, key, iv):
-    block_size = 16  # AES block size is 16 bytes
     ciphertext = []
     previous_block = iv
 
@@ -19,7 +20,7 @@ def cbc_encrypt(plaintext, key, iv):
         # XOR with previous block or IV
         xor_result = xor_blocks(block, previous_block)
         # Encrypt the XOR result
-        encrypted_block = AES.aes_encrypt(xor_result, key)
+        encrypted_block = cipher.encrypt(xor_result, key)
         # Append to ciphertext
         ciphertext.extend(encrypted_block)
         # Update the previous block for the next iteration
