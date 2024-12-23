@@ -1,3 +1,19 @@
+def int_to_hex(int_list):
+    ciphertext_hex_array = [f"0x{byte:02x}" for byte in int_list]
+    formatted_ciphertext = "[" + ", ".join(ciphertext_hex_array) + "]"
+
+    return formatted_ciphertext
+
+# Galois Field multiplication
+def gmul(a, b):
+    p = 0
+    while b:
+        if b & 1:
+            p ^= a
+        a = (a << 1) ^ (0x1B if a & 0x80 else 0)
+        b >>= 1
+    return p & 0xFF  # Ensure the result is a byte
+
 # AES-128 block cipher implementation in Python
 
 # AES S-Box
@@ -54,20 +70,15 @@ def shift_rows(state):
         state[12], state[1], state[6], state[11]
     ]
 
-# Mix columns operation
-def mix_columns(state):
-    def mix_single_column(column):
-        return [
-            column[0] ^ column[1] ^ column[2] ^ column[3],
-            column[0] ^ column[1] ^ column[1] ^ column[2] ^ column[3],
-            column[0] ^ column[2] ^ column[3] ^ column[0],
-            column[0] ^ column[3] ^ column[1] ^ column[2]
-        ]
-    new_state = []
-    for i in range(4):
-        column = [state[i], state[4 + i], state[8 + i], state[12 + i]]
-        mixed = mix_single_column(column)
-        new_state.extend(mixed)
+# MixColumns operation 
+def mix_columns(state): 
+    new_state = [0] * 16 
+    for i in range(4): # Process each column 
+        col = state[i*4:(i+1)*4] # Extract the column 
+        new_state[i*4 + 0] = gmul(col[0], 2) ^ gmul(col[1], 3) ^ col[2] ^ col[3] 
+        new_state[i*4 + 1] = col[0] ^ gmul(col[1], 2) ^ gmul(col[2], 3) ^ col[3] 
+        new_state[i*4 + 2] = col[0] ^ col[1] ^ gmul(col[2], 2) ^ gmul(col[3], 3) 
+        new_state[i*4 + 3] = gmul(col[0], 3) ^ col[1] ^ col[2] ^ gmul(col[3], 2) 
     return new_state
 
 # Add round key operation
@@ -106,7 +117,12 @@ def encrypt(block, key):
 # AES decryption
 
 if __name__ == "__main__":
-    key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0xcf, 0x9b, 0x6d, 0x8f, 0x6c, 0x7e]
-    plaintext = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0xcf, 0x9b, 0x6d, 0x8f, 0x6c, 0x7e]
+
+    # FISP-197 Test vectors
+    key =       [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]
+    plaintext = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
     
-    print(encrypt(plaintext,key))
+    ciphertext = encrypt(plaintext,key)
+
+    
+    print("Ciphertext:",int_to_hex(ciphertext))
