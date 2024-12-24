@@ -1,3 +1,4 @@
+import utils
 import AES_128 as cipher
 
 block_size = 16  #bytes
@@ -30,16 +31,14 @@ def cbc_encrypt(plaintext, key, iv):
 
 if __name__ == "__main__":
 
-    #key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0xcf, 0x9b, 0x6d, 0x8f, 0x6c, 0x7e]
-    key = [0x00] * 16
-    iv = [0x00] * 16  # Example IV with 16 zero bytes
-    #plaintext = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34,]
-    plaintext = [0x00]* 16
+    key = utils.str_to_int_array("0x2b7e151628aed2a6abf7158809cf4f3c")
+    iv  = utils.str_to_int_array("0x000102030405060708090A0B0C0D0E0F")
+    plaintext = utils.str_to_int_array("0x6bc1bee22e409f96e93d7e117393172a")
+    print("Plaintext:",plaintext)
+    print("key:",key)
+    print("iv:",iv)
 
     ciphertext = cbc_encrypt(plaintext, key, iv)
-    print(ciphertext)
+    print(utils.int_array_to_hex_array(ciphertext))
 
-    # Convert ciphertext to hex
-    ciphertext_hex_array = [f"0x{byte:02x}" for byte in ciphertext]
-    formatted_ciphertext = "ciphertext = [" + ", ".join(ciphertext_hex_array) + "]"
-    print(formatted_ciphertext)
+    
