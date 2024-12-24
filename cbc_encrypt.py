@@ -39,6 +39,6 @@ if __name__ == "__main__":
     print("iv:",iv)
 
     ciphertext = cbc_encrypt(plaintext, key, iv)
-    print(utils.int_array_to_hex_array(ciphertext))
+    print(utils.int_to_hex(ciphertext))
 
     

@@ -1,3 +1,4 @@
+# Takes string of form "0x0001..." converts int list of form [0,1]
 def str_to_int_array(hex_str):
     # Remove the '0x' prefix if it exists
     hex_str = hex_str[2:] if hex_str.startswith("0x") else hex_str
@@ -10,9 +11,23 @@ def str_to_int_array(hex_str):
     return [int(hex_str[i:i+2], 16) for i in range(0, len(hex_str), 2)]
 
 
-def int_array_to_hex_array(int_array):
-    # Convert each integer in the array to a hexadecimal string
-    return [hex(x) for x in int_array]
+
+# Takes int array converts hex array
+def int_to_hex(int_list):
+    ciphertext_hex_array = [f"0x{byte:02x}" for byte in int_list]
+    formatted_ciphertext = "[" + ", ".join(ciphertext_hex_array) + "]"
+    return formatted_ciphertext
+
+# Galois Field multiplication
+def gmul(a, b):
+    p = 0
+    while b:
+        if b & 1:
+            p ^= a
+        a = (a << 1) ^ (0x1B if a & 0x80 else 0)
+        b >>= 1
+    return p & 0xFF  # Ensure the result is a byte
+
 
 if __name__ == "__main__":
 

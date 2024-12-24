@@ -1,5 +1,4 @@
 import utils
-# AES-128 block cipher implementation in Python
 
 # AES S-Box
 SBOX = [
@@ -39,7 +38,8 @@ SBOX = [
 
 # AES Rcon values
 RCON = [
-    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36
+    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36, 
+    0x6C, 0xD8, 0xAB, 0x4D
 ]
 
 # Substitute bytes using the AES S-box
@@ -70,16 +70,16 @@ def mix_columns(state):
 def add_round_key(state, round_key):
     return [state[i] ^ round_key[i] for i in range(len(state))]
 
-# Key expansion
+# Key expansion for AES-256 (32 bytes key, 14 rounds)
 def key_expansion(key):
     expanded_keys = list(key)
-    for i in range(4, 44):
+    for i in range(8, 60):
         temp = expanded_keys[-4:]
-        if i % 4 == 0:
+        if i % 8 == 0:
             temp = temp[1:] + temp[:1]  # Rotate word
             temp = [SBOX[b] for b in temp]  # Substitute using S-Box
-            temp[0] ^= RCON[(i // 4) - 1]
-        expanded_keys.extend([expanded_keys[-16 + j] ^ temp[j] for j in range(4)])
+            temp[0] ^= RCON[(i // 8) - 1]
+        expanded_keys.extend([expanded_keys[-32 + j] ^ temp[j] for j in range(4)])
     return [expanded_keys[i:i + 16] for i in range(0, len(expanded_keys), 16)]
 
 # AES encryption
@@ -87,7 +87,7 @@ def encrypt(block, key):
     round_keys = key_expansion(key)
     state = add_round_key(block, round_keys[0])
 
-    for round in range(1, 10):
+    for round in range(1, 13):
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
@@ -95,7 +95,7 @@ def encrypt(block, key):
 
     state = sub_bytes(state)
     state = shift_rows(state)
-    state = add_round_key(state, round_keys[10])
+    state = add_round_key(state, round_keys[14])
 
     return state
 
@@ -103,11 +103,13 @@ def encrypt(block, key):
 
 if __name__ == "__main__":
 
-    # FISP-197 Test vectors
-    key =       [0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f]
-    plaintext = [0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff]
+    # AES-256 Test vectors
+    plaintext = utils.str_to_int_array("0x00112233445566778899aabbccddeeff")
+    key = utils.str_to_int_array("0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
     
-    ciphertext = encrypt(plaintext,key)
+    print("plaintext:",utils.int_to_hex(plaintext))
+    print("key:",utils.int_to_hex(key))
 
+    ciphertext = encrypt(plaintext, key)
     
-    print("Ciphertext:",utils.int_to_hex(ciphertext))
+    print("Ciphertext:", utils.int_to_hex(ciphertext))
