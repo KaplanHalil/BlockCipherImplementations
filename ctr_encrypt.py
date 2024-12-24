@@ -40,10 +40,10 @@ def ctr_encrypt(plaintext, key, nonce, iv, initial_counter):
 
 if __name__ == "__main__":
     # Test Vector #1
-    key = utils.str_to_int_array("0xAE6852F8121067CC4BF7A5765577F39E")
-    nonce = utils.str_to_int_array("0x00000030")  # 4 bytes
-    iv = utils.str_to_int_array("0x0000000000000000")  # 8 bytes
-    plaintext = utils.str_to_int_array("0x53696E676C6520626C6F636B206D7367")
+    key = utils.str_to_int_array("0x7E24067817FAE0D743D6CE1F32539163")
+    nonce = utils.str_to_int_array("0x006CB6DB")  # 4 bytes
+    iv = utils.str_to_int_array("0xC0543B59DA48D90B")  # 8 bytes
+    plaintext = utils.str_to_int_array("0x000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F")
     initial_counter = 1  # Start from block counter 1
 
     print("Plaintext:", utils.int_to_hex(plaintext))
