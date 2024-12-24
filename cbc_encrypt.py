@@ -1,5 +1,6 @@
 import utils
-import AES_128 as cipher
+#import AES_128 as cipher
+import AES_256 as cipher
 
 block_size = 16  #bytes
 
@@ -31,7 +32,7 @@ def cbc_encrypt(plaintext, key, iv):
 
 if __name__ == "__main__":
 
-    key = utils.str_to_int_array("0x2b7e151628aed2a6abf7158809cf4f3c")
+    key = utils.str_to_int_array("0x603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4")
     iv  = utils.str_to_int_array("0x000102030405060708090A0B0C0D0E0F")
     plaintext = utils.str_to_int_array("0x6bc1bee22e409f96e93d7e117393172a")
     print("Plaintext:",plaintext)
