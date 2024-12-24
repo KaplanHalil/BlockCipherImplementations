@@ -70,29 +70,38 @@ def mix_columns(state):
 def add_round_key(state, round_key):
     return [state[i] ^ round_key[i] for i in range(len(state))]
 
-# Key expansion for AES-256 (32 bytes key, 14 rounds)
+# AES-256 Key Expansion
 def key_expansion(key):
+    # The AES-256 key size is 32 bytes (256 bits), and we need 60 32-bit words (15 rounds, plus the initial key)
     expanded_keys = list(key)
+    
+    # AES-256 has 14 rounds, so we need a total of 60 words (4 words per round + the initial key)
     for i in range(8, 60):
         temp = expanded_keys[-4:]
         if i % 8 == 0:
             temp = temp[1:] + temp[:1]  # Rotate word
-            temp = [SBOX[b] for b in temp]  # Substitute using S-Box
-            temp[0] ^= RCON[(i // 8) - 1]
+            temp = [SBOX[b] for b in temp]  # Apply S-box
+            temp[0] ^= RCON[(i // 8) - 1]  # XOR with the round constant
+        elif i % 8 == 4:
+            temp = [SBOX[b] for b in temp]  # Apply S-box to the word
+
         expanded_keys.extend([expanded_keys[-32 + j] ^ temp[j] for j in range(4)])
+    
     return [expanded_keys[i:i + 16] for i in range(0, len(expanded_keys), 16)]
+
 
 # AES encryption
 def encrypt(block, key):
     round_keys = key_expansion(key)
     state = add_round_key(block, round_keys[0])
 
-    for round in range(1, 13):
+    for round in range(1, 14):
+        
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         state = add_round_key(state, round_keys[round])
-
+            
     state = sub_bytes(state)
     state = shift_rows(state)
     state = add_round_key(state, round_keys[14])
