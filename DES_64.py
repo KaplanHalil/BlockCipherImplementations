@@ -139,7 +139,9 @@ def encrypt(block, key):
     return block
 
 if __name__ == "__main__":
-    plaintext = utils.str_to_int_array("0x0123456789ABCDEF")
-    key = utils.str_to_int_array("0x133457799BBCDFF1")
+    plaintext = utils.str_to_int_array("0x0123456701234567")
+    print(plaintext)
+    key = utils.str_to_int_array("0x1234567801234567")
+    print(key)
     ciphertext = encrypt(plaintext, key)
     print("Ciphertext:", utils.int_to_hex(ciphertext))
