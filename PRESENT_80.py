@@ -1,5 +1,3 @@
-# PRESENT block cipher implementation in Python
-
 # PRESENT S-Box
 SBOX = [
     0xC, 0x5, 0x6, 0xB, 0x9, 0x0, 0xA, 0xD,
@@ -49,13 +47,13 @@ def key_schedule(key):
         current_key = list(rotated_key.to_bytes(10, 'big'))
         # Apply S-box to the leftmost nibble
         current_key[0] = (SBOX[current_key[0] >> 4] << 4) | (current_key[0] & 0xF)
-        # XOR the round counter into the last 5 bits of the key
-        current_key[9] ^= (round + 1)
+        # XOR the round counter into the key
+        current_key[9] ^= round + 1
     return round_keys
 
 # PRESENT encryption
 def encrypt(block, key):
-    state = block
+    state = block[:]
     round_keys = key_schedule(key)
     for round_key in round_keys[:-1]:
         state = add_round_key(state, round_key)
@@ -70,4 +68,4 @@ if __name__ == "__main__":
     key = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
     
     ciphertext = encrypt(plaintext, key)
-    print("Ciphertext:", "".join(f"{byte:02X}" for byte in ciphertext))
+    print("Ciphertext:", "".join(f"{byte:02X}" for byte in ciphertext))  # Should be 5579C1387B228445
