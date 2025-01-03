@@ -3,14 +3,14 @@ import utils
 import AES_256 as cipher
 
 block_size = 16  #bytes
-ciphertext_size= 256 # Mb
+ciphertext_size= 8 # Mb
 
 
 # makes CBC mode encryption and writes ciphertext to the file
 def cbc_encrypt_write(plaintext, key, iv):
 
     # Encrypt and write the plaintext in chunks
-    with open("ciphertext.txt", "wb") as f:
+    with open("ciphertext.hex", "wb") as f:
         previous_block = iv
         for i in range(0, len(plaintext), block_size):
             block = plaintext[i:i + block_size]
