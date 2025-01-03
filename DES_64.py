@@ -1,6 +1,6 @@
 # Not working correctly
 
-import utils
+from Crypto_tools import utils
 
 # Initial Permutation Table
 IP = [

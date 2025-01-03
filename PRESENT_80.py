@@ -1,4 +1,5 @@
 # Not working correctly
+import utils
 
 # PRESENT S-Box
 SBOX = [
