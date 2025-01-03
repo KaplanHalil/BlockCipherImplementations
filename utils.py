@@ -28,6 +28,9 @@ def gmul(a, b):
         b >>= 1
     return p & 0xFF  # Ensure the result is a byte
 
+# XOR operation
+def xor_blocks(block1, block2):
+    return [b1 ^ b2 for b1, b2 in zip(block1, block2)]
 
 if __name__ == "__main__":
 
