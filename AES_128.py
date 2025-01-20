@@ -72,7 +72,7 @@ def add_round_key(state, round_key):
     return [state[i] ^ round_key[i] for i in range(len(state))]
 
 # Key expansion
-def key_expansion(key):
+def key_schedule(key):
     expanded_keys = list(key)
     for i in range(4, 44):
         temp = expanded_keys[-4:]
@@ -85,7 +85,7 @@ def key_expansion(key):
 
 # AES encryption
 def encrypt(block, key):
-    round_keys = key_expansion(key)
+    round_keys = key_schedule(key)
     state = add_round_key(block, round_keys[0])
 
     for round in range(1, 10):

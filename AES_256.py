@@ -1,5 +1,10 @@
 import utils
 
+num_rounds = 14
+ciphertext_size = 16  #bytes
+
+rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
+
 # AES S-Box
 SBOX = [
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
@@ -91,22 +96,31 @@ def key_schedule(key):
 
 
 # AES encryption
-def encrypt(block, key):
-    round_keys = key_expansion(key)
+def encrypt(block, key,rc):
+    round_keys = key_schedule(key)
     state = add_round_key(block, round_keys[0])
 
-    for round in range(1, 14):
+    for round in range(1, num_rounds):
         
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         state = add_round_key(state, round_keys[round])
+        rc[round-1]=state # Store round ciphertexts
             
     state = sub_bytes(state)
     state = shift_rows(state)
     state = add_round_key(state, round_keys[14])
 
     return state
+
+# Returns round ciphertexts
+def return_rc(plaintext,key):
+
+    rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
+    encrypt(plaintext, key,rc)
+
+    return rc
 
 # AES decryption
 
@@ -119,6 +133,7 @@ if __name__ == "__main__":
     print("plaintext:",utils.int_to_hex(plaintext))
     print("key:",utils.int_to_hex(key))
 
-    ciphertext = encrypt(plaintext, key)
+    ciphertext = encrypt(plaintext, key,rc)
     
     print("Ciphertext:", utils.int_to_hex(ciphertext))
+    print("Round Ciphertexts:",return_rc(plaintext,key))
