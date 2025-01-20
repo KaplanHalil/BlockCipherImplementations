@@ -111,7 +111,7 @@ def encrypt(block, key,rc):
     state = sub_bytes(state)
     state = shift_rows(state)
     state = add_round_key(state, round_keys[14])
-
+    rc[num_rounds-1]=state # Store last round ciphertexts
     return state
 
 # Returns round ciphertexts
@@ -136,4 +136,4 @@ if __name__ == "__main__":
     ciphertext = encrypt(plaintext, key,rc)
     
     print("Ciphertext:", utils.int_to_hex(ciphertext))
-    print("Round Ciphertexts:",return_rc(plaintext,key))
+    
