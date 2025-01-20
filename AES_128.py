@@ -2,6 +2,15 @@ import utils
 
 # AES-128 block cipher implementation in Python
 
+plaintext_size = 16  #bytes
+ciphertext_size = 16  #bytes
+mkey_size= 16 #bytes
+round_key_size = 16 #bytes
+round_key = 11 # number of subkeys
+num_rounds = 10
+
+rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
+
 # AES S-Box
 SBOX = [
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
@@ -88,19 +97,27 @@ def encrypt(block, key):
     round_keys = key_schedule(key)
     state = add_round_key(block, round_keys[0])
 
-    for round in range(1, 10):
+    for round in range(1, num_rounds):
         state = sub_bytes(state)
         state = shift_rows(state)
         state = mix_columns(state)
         state = add_round_key(state, round_keys[round])
 
+        rc[round-1]=state # Store round ciphertexts
     state = sub_bytes(state)
     state = shift_rows(state)
     state = add_round_key(state, round_keys[10])
 
+    rc[num_rounds-1]=state # Store last round ciphertexts
     return state
 
-# AES decryption
+# Returns round ciphertexts
+def return_rc(plaintext,key):
+
+    rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
+    encrypt(plaintext, key,rc)
+
+    return rc
 
 if __name__ == "__main__":
 

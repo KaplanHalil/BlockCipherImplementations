@@ -2,17 +2,57 @@
 """
 İmplementasyonun test sistemi ile uyumlu olmasi için aşağidaki fonksiyonlar formatiyla implementasyonda olmali 
 
-util import edilmeli
+state byte list leklinde olamali ve list üstünde islemler dönmeli [1,5,124,...,241] gibi
+
+key schedule fonksiyonu keyi alip round keyleri 2d list olarak dondurmeli [[1,5,124,...,241],[1,5,124,...,241],...] gibi
+
 """
+import utils 
+
+plaintext_size = 16  #bytes
+ciphertext_size = 16  #bytes
+mkey_size= 32 #bytes
+round_key_size = 16 #bytes
+round_key = 15 # number of subkeys
+num_rounds = 14
+
+rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
+
 
 # Takes mk and returns round keys as 2d list
 def key_schedule(key):
     
     return []
 
+def encrypt(block, key,rc):
+    round_keys = key_schedule(key)
+    state = add_round_key(block, round_keys[0])
 
-# cipher round encryption
-def encrypt(block, key):
-    
+    for round in range(1, num_rounds):
+        
+        state = sub_bytes(state)
+        state = shift_rows(state)
+        state = mix_columns(state)
+        state = add_round_key(state, round_keys[round])
+        rc[round-1]=state # Store round ciphertexts
+            
+    state = sub_bytes(state)
+    state = shift_rows(state)
+    state = add_round_key(state, round_keys[14])
+
+    rc[num_rounds-1]=state # Store last round ciphertexts
 
     return state
+
+if __name__ == "__main__":
+
+    # AES-256 Test vectors
+    plaintext = utils.str_to_int_array("0x00112233445566778899aabbccddeeff")
+    key = utils.str_to_int_array("0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
+    
+    print("plaintext:",utils.int_to_hex(plaintext))
+    print("key:",utils.int_to_hex(key))
+
+    ciphertext = encrypt(plaintext, key,rc)
+    
+    print("Ciphertext:", utils.int_to_hex(ciphertext))
