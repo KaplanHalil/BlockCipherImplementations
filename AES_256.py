@@ -71,7 +71,7 @@ def add_round_key(state, round_key):
     return [state[i] ^ round_key[i] for i in range(len(state))]
 
 # AES-256 Key Expansion
-def key_expansion(key):
+def key_schedule(key):
     # The AES-256 key size is 32 bytes (256 bits), and we need 60 32-bit words (15 rounds, plus the initial key)
     expanded_keys = list(key)
     
