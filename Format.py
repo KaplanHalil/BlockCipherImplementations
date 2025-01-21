@@ -18,6 +18,16 @@ num_rounds = 14
 
 rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
 
+SBOX = [
+    0x63, 0x7c, 0x77, ...
+]
+
+
+def sub_bytes(state):
+    return [SBOX[byte] for byte in state]
+
+def add_round_key(state, round_key):
+    return [state[i] ^ round_key[i] for i in range(len(state))]
 
 # Takes mk and returns round keys as 2d list
 def key_schedule(key):
@@ -25,20 +35,18 @@ def key_schedule(key):
     return []
 
 def encrypt(block, key,rc):
+
     round_keys = key_schedule(key)
     state = add_round_key(block, round_keys[0])
 
     for round in range(1, num_rounds):
         
         state = sub_bytes(state)
-        state = shift_rows(state)
-        state = mix_columns(state)
-        state = add_round_key(state, round_keys[round])
+        
         rc[round-1]=state # Store round ciphertexts
             
     state = sub_bytes(state)
-    state = shift_rows(state)
-    state = add_round_key(state, round_keys[14])
+    
 
     rc[num_rounds-1]=state # Store last round ciphertexts
 
@@ -46,7 +54,7 @@ def encrypt(block, key,rc):
 
 if __name__ == "__main__":
 
-    # AES-256 Test vectors
+    
     plaintext = utils.str_to_int_array("0x00112233445566778899aabbccddeeff")
     key = utils.str_to_int_array("0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f")
     

@@ -1,7 +1,11 @@
 import utils
 
-num_rounds = 14
+plaintext_size = 16  #bytes
 ciphertext_size = 16  #bytes
+mkey_size= 32 #bytes
+round_key_size = 16 #bytes
+round_key = 15 # number of subkeys
+num_rounds = 14
 
 rc=[[0]*ciphertext_size]*num_rounds # Define empty list to store round cipertexts
 
